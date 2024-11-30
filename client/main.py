@@ -1,14 +1,18 @@
 from PyQt5.QtWidgets import QApplication
 from login_window import LoginWindow
+from websocket_client import WebSocketClient
+import asyncio
 
-def main():
+from PyQt5.QtCore import QTimer, QEventLoop
+
+async def main():
     app = QApplication([])
 
-    # Crear la ventana de inicio de sesión y mostrarla
+    ws_client = WebSocketClient("ws://localhost:8000/ws")
+
     login_window = LoginWindow()
     login_window.show()
 
-    # Ejecutar la aplicación
     app.exec_()
 
 if __name__ == "__main__":

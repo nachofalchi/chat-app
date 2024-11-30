@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 import bcrypt
 
 Base = declarative_base()
-engine = create_engine('sqlite:///chat.db')
+engine = create_engine('sqlite:///app.db')
 Session = sessionmaker(bind=engine)
 
 class UserDatabase(Base):

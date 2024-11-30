@@ -1,7 +1,7 @@
 # Import Modules
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QLabel, QPushButton, QLineEdit, QMessageBox
-from models import UserDatabase as db
+
 from chat_window import ChatWindow
 
 class LoginWindow(QWidget):
@@ -38,31 +38,26 @@ class LoginWindow(QWidget):
         self.setLayout(layout)
 
         # Event
-        self.login_button.clicked.connect(self.login)
-        self.register_button.clicked.connect(self.register)
+        # self.login_button.clicked.connect(self.login)
+        # self.register_button.clicked.connect(self.register)
     
-    def login(self):
-        username = self.username_field.text()
-        password = self.password_field.text()
+    # def login(self):
+    #     username = self.username_field.text()
+    #     password = self.password_field.text()
 
-        if db.verify_password(username, password):
-            self.close()
-            self.open_chat_window()
-        else:
-            QMessageBox.critical(self, 'Error', 'Could not login')
-            self.password_field.clear()
+    #     
 
-    def register(self):
-        username = self.username_field.text()
-        password = self.password_field.text()
+    # def register(self):
+    #     username = self.username_field.text()
+    #     password = self.password_field.text()
 
-        if not db.register_user(username, password):
-            self.password_field.clear()
-            QMessageBox.critical(self, 'Error', 'Could not register user')
-        else:
-            self.close()
-            self.open_chat_window()
+    #     if not db.register_user(username, password):
+    #         self.password_field.clear()
+    #         QMessageBox.critical(self, 'Error', 'Could not register user')
+    #     else:
+    #         self.close()
+    #         self.open_chat_window()
 
-    def open_chat_window(self):
-        self.chat_window = ChatWindow()
-        self.chat_window.show()
+    # def open_chat_window(self):
+    #     self.chat_window = ChatWindow()
+    #     self.chat_window.show()
