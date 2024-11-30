@@ -1,4 +1,4 @@
-from models.user import UserDatabase as db
+from models.user import User as db
 
 def create_user(username, password):
     if not db.register_user(username, password):
