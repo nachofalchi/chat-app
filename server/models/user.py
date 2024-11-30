@@ -9,6 +9,7 @@ class User(Base):
     
     username = Column(String, primary_key=True, unique=True)
     password_hash = Column(String)
+    websocket_id = Column(String, unique=True)
 
     @classmethod
     def verify_password(cls, username, password):
