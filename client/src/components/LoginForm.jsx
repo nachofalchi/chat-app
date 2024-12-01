@@ -1,59 +1,88 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 export const LoginForm = () => {
-
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
 
+  // Submit form
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (!username || !password) {
-      setErrorMessage("Por favor, completa todos los campos.");
-      return;
+    try {
+      if (!username || !password) {
+        setErrorMessage("Both username and password are required");
+        return;
+      }
+
+      // If login
+      if (isLogin) {
+        const response = await axios.post("http://127.0.0.1:8000/users/login", {
+          username: username,
+          password: password,
+        });
+
+        if (response.status === 200) {
+          alert("Login successful!");
+          setErrorMessage("");
+          // Redirection to another page
+        } else {
+          setErrorMessage("Invalid username or password");
+        }
+      } else {
+        // If register
+        const response = await axios.post("http://127.0.0.1:8000/users/register", {
+          username: username,
+          password: password,
+        });
+
+        if (response.status === 201) {
+          alert("Registration successful! You can now log in.");
+          setIsLogin(true);
+          setErrorMessage("");
+        } else {
+          setErrorMessage("Error registering user");
+        }
+      }
+    } catch (error) {
+      setErrorMessage("Username already exists");
     }
-
   };
 
   return (
     <div>
-      <h1>Login</h1>
-      
-      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
-
-      {/* Form */}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Username:</label>
+        <label>
+          Username:
           <input
-            type=""
+            type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Enter your username"
           />
-        </div>
-
-        <div>
-          <label>Password:</label>
+        </label>
+        <br />
+        <label>
+          Password:
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
           />
-        </div>
-
-        <button type="submit">Log In</button>
+        </label>
+        <br />
+        <button type="submit">
+          {isLogin ? "Log in" : "Register"}
+        </button>
       </form>
 
-      {isLoggedIn && <div>¡Inicio de sesión exitoso!</div>}
+      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
 
       <div>
-        <p>Don’t have an account?</p>
-        <button>Sign up</button>
+        <button onClick={() => setIsLogin(!isLogin)}>
+          {isLogin ? "Need an account? Register here" : "Already have an account? Log in"}
+        </button>
       </div>
     </div>
   );
