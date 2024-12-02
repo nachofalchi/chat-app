@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from schemas.user import UserCreate
-from crud.user import create_user as crud_create_user
-from crud.user import verify_user as crud_verify_user
+from crud.user import register_user as crud_register_user
+from crud.user import login_user as crud_login_user
+from auth.utils import validate_token, generate_token
 
 router = APIRouter()
 
@@ -13,7 +14,7 @@ router = APIRouter()
 )
 async def create_user(user: UserCreate):
     try:
-        if crud_create_user(user.username, user.password):
+        if crud_register_user(user.username, user.password):
             return {"message": "User created successfully"}
         else:
             raise HTTPException(status_code=400, detail="Could not create user")
@@ -28,9 +29,21 @@ async def create_user(user: UserCreate):
 )
 async def login_user(user: UserCreate):
     try:
-        if crud_verify_user(user.username, user.password):
-            return {"message": "Login successful"}
+        if crud_login_user(user.username, user.password):
+            generated_token = generate_token(user.username)
+            return {"message": "Login successful", "token": generated_token}
         else:
             raise HTTPException(status_code=401, detail="Invalid username or password")
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+# Private endpoint
+@router.get(
+            "/private",
+            description="Private endpoint",
+            status_code=status.HTTP_200_OK
+)
+async def private_endpoint(validated_token: bool = Depends(validate_token)):
+    if not validated_token:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    return {"message": "This is a private endpoint"}

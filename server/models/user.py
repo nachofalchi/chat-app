@@ -9,10 +9,9 @@ class User(Base):
     
     username = Column(String, primary_key=True, unique=True)
     password_hash = Column(String)
-    websocket_id = Column(String, unique=True)
 
     @classmethod
-    def verify_password(cls, username, password):
+    def login_user(cls, username, password):
         session = Session()
         try:
             user = session.query(User).filter_by(username=username).first()
@@ -33,6 +32,17 @@ class User(Base):
             return True
         except IntegrityError:
             session.rollback()
+            return False
+        finally:
+            session.close()
+
+    @classmethod
+    def validate_user(cls, username):
+        session = Session()
+        try:
+            user = session.query(User).filter_by(username=username).first()
+            if user:
+                return True
             return False
         finally:
             session.close()

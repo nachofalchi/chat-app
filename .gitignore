@@ -1,11 +1,13 @@
+# Back
 /.myenv
 **/__pycache__/
 server/app.db
-
+server/config.env
 /node_modules
 /.pnp
 .pnp.js
 
+# Front
 # testing
 /coverage
 
