@@ -16,38 +16,46 @@ export const LoginForm = () => {
         setErrorMessage("Both username and password are required");
         return;
       }
-
-      // If login
+    
+      let response;
+    
       if (isLogin) {
-        const response = await axios.post("http://127.0.0.1:8000/users/login", {
+        // Login request
+        response = await axios.post("http://127.0.0.1:8000/users/login", {
           username: username,
           password: password,
         });
-
-        if (response.status === 200) {
-          alert("Login successful!");
-          setErrorMessage("");
-          // Redirection to another page
-        } else {
-          setErrorMessage("Invalid username or password");
-        }
+        alert("Login successful!");
+        setErrorMessage("");
+        // Redirect to another page
       } else {
-        // If register
-        const response = await axios.post("http://127.0.0.1:8000/users/register", {
+        // Register request
+        response = await axios.post("http://127.0.0.1:8000/users/register", {
           username: username,
           password: password,
         });
-
-        if (response.status === 201) {
-          alert("Registration successful! You can now log in.");
-          setIsLogin(true);
-          setErrorMessage("");
-        } else {
-          setErrorMessage("Error registering user");
-        }
+        alert("Registration successful! You can now log in.");
+        setIsLogin(true);
+        setErrorMessage("");
       }
     } catch (error) {
-      setErrorMessage("Username already exists");
+      if (error.response) {
+        // Handle specific HTTP errors
+        if (error.response.status === 400) {
+          setErrorMessage(
+            isLogin ? "Invalid username or password" : "Error registering user"
+          );
+        } else {
+          setErrorMessage("An unexpected error occurred");
+        }
+      } else if (error.request) {
+        // Request was made but no response was received
+        setErrorMessage("Server is not responding. Please try again later.");
+      } else {
+        // Something else caused the error
+        console.log("Error", error.message);
+        setErrorMessage("An unexpected error occurred");
+      }
     }
   };
 
