@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./LoginForm.css";
 
 export const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -17,20 +18,24 @@ export const LoginForm = () => {
         return;
       }
     
-      let response;
-    
       if (isLogin) {
         // Login request
-        response = await axios.post("http://127.0.0.1:8000/users/login", {
+        const response = await axios.post("http://127.0.0.1:8000/users/login", {
           username: username,
           password: password,
         });
+
+        const token = response.data.token;
+
+        // Save token to local storage
+        localStorage.setItem("token", token);
+        
         alert("Login successful!");
         setErrorMessage("");
         // Redirect to another page
       } else {
         // Register request
-        response = await axios.post("http://127.0.0.1:8000/users/register", {
+        await axios.post("http://127.0.0.1:8000/users/register", {
           username: username,
           password: password,
         });
@@ -85,7 +90,7 @@ export const LoginForm = () => {
         </button>
       </form>
 
-      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
+      {errorMessage && <div>{errorMessage}</div>}
 
       <div>
         <button onClick={() => setIsLogin(!isLogin)}>
