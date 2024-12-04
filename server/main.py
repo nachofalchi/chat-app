@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
-from routes import user
+from routes import user, email
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -25,3 +25,4 @@ def get():
     """)
 
 app.include_router(user.router, prefix="/users", tags=["Users"])
+app.include_router(email.router, prefix="/email", tags=["Email"])

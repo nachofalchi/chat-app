@@ -36,14 +36,3 @@ async def login_user(user: UserCreate):
             raise HTTPException(status_code=401, detail="Invalid username or password")
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
-# Private endpoint
-@router.get(
-            "/private",
-            description="Private endpoint",
-            status_code=status.HTTP_200_OK
-)
-async def private_endpoint(validated_token: bool = Depends(validate_token)):
-    if not validated_token:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    return {"message": "This is a private endpoint"}
