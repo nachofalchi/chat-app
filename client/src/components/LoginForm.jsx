@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./LoginForm.css";
 
@@ -7,6 +8,7 @@ export const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
 
   // Submit form
   const handleSubmit = async (event) => {
@@ -33,6 +35,8 @@ export const LoginForm = () => {
         alert("Login successful!");
         setErrorMessage("");
         // Redirect to another page
+        navigate("/main");
+
       } else {
         // Register request
         await axios.post("http://127.0.0.1:8000/users/register", {
