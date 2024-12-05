@@ -9,6 +9,7 @@ export const MainMenu = () => {
     const [emails, setEmails] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [username] = useState(localStorage.getItem('username'));
     const navigate = useNavigate();
 
     // Logout
@@ -49,6 +50,17 @@ export const MainMenu = () => {
 
     return (
         <div className="mail-container">
+            {/* Top Bar */}
+            <div className="top-bar">
+                <div className='app-name'>Mail App</div>
+                <div className="search-bar">
+                    <input type="text" placeholder="Search mail..." />
+                    <button className="search-button">
+                        <SearchIcon className="search-icon" />
+                    </button>
+                </div>
+                <div className="user-info">{username}</div>
+            </div>
             {/* Sidebar */}
             <div className="sidebar">
                 <button className="compose-btn">Compose</button>
@@ -62,16 +74,23 @@ export const MainMenu = () => {
                     className="logout-btn"
                     onClick={handleLogout}
                 >
-                    Logout
-                </button>
+                Logout</button>
             </div>
 
             {/* Email List */}
             <div className="email-list">
-                <div className="search-bar">
-                    <input type="text" placeholder="Search mail..." />
-                    <button className="search-button">
-                        <SearchIcon className="search-icon" />
+                <div className='email-control-buttons'>
+                    <button className="control-button">
+                        <span className="control-icon">🗑️</span>
+                        Delete
+                    </button>
+                    <button className="control-button">
+                        <span className="control-icon">📨</span>
+                        Mark as Read
+                    </button>
+                    <button className="control-button">
+                        <span className="control-icon">📁</span>
+                        Move to
                     </button>
                 </div>
                 <div className="email-list-container">

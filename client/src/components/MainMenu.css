@@ -1,23 +1,78 @@
 /* MainMenu.css */
 body {
-    margin: 0;
-    padding: 0;
+    margin: 0px;
+    padding: 0px;
     overflow: hidden; 
     height: 100vh;    
 }
 
 .mail-container {
     display: grid;
+    grid-template-rows: auto 1fr;
     grid-template-columns: 200px 500px 1fr;
-    width: 90vw;
-    height: 90vh;
+    width: 100vw;
+    height: 100vh;
     overflow: hidden;
 }
+/* Topbar */
+.top-bar {
+    display: grid;
+    grid-template-columns: 200px 500px 1fr;
+    grid-column: 1 / -1;
+    background: #f5f5f5;
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    align-items: center;
+    margin: 0px;
+    padding: 0px;
+}
+
+.app-name {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #202124;
+    grid-column: 1;
+    margin: 20px;
+
+}
+.user-info {
+    grid-column: 3;
+    text-align: end;
+    margin: 20px;
+}
+
+/* Search bar */
+.search-bar {
+    position: relative;
+    margin: 0px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar input {
+    width: 90%;
+    padding: 8px 40px 8px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    font-size: 0.9em;
+}
+.search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #5f6368;
+    padding: 0px;
+    height: 20px;
+    width: 20px;
+}
+
 /* Sidebar */
 .sidebar {
     background: #fff;
     padding: 20px;
     border-right: 1px solid #e0e0e0;
+    margin: 0px;
 }
 
 .compose-btn {
@@ -26,6 +81,17 @@ body {
     color: white;
     border-radius: 24px;
     cursor: pointer;
+    width: 100%;
+    border-color: transparent;
+}
+.logout-btn {
+    padding: 10px;
+    background: #9d9d9e;
+    color: white;
+    border-radius: 24px;
+    border-color: transparent;
+    cursor: pointer;
+    width: 100%;
 }
 
 .folder-list {
@@ -54,33 +120,35 @@ body {
     overflow: hidden;
     background: #fff;
     border-right: 1px solid #e0e0e0;
-}
-
-/* Search bar */
-.search-bar {
-    position: relative;
     margin: 0px;
-    padding: 20px;
+}
+.email-control-buttons {
+    padding: 10px 20px;
     border-bottom: 1px solid #e0e0e0;
     display: flex;
-    align-items: center;
+    gap: 10px;
+    background: #fff;
+    justify-content: center;
 }
 
-.search-bar input {
-    width: 90%;
-    padding: 8px 40px 8px 15px;
-    border: 1px solid #e0e0e0;
-    border-radius: 20px;
-    font-size: 0.9em;
-}
-.search-button {
-    background: none;
+.control-button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
     border: none;
-    cursor: pointer;
+    border-radius: 4px;
+    background: transparent;
     color: #5f6368;
-    padding: 0px;
-    height: 20px;
-    width: 20px;
+    cursor: pointer;
+}
+
+.control-button:hover {
+    background: #f1f3f4;
+}
+
+.control-icon {
+    font-size: 16px;
 }
 
 /* Email list */
@@ -142,6 +210,7 @@ body {
 .email-view {
     padding: 20px;
     background: #fff;
+    margin: 0px;
 }
 
 /* Email selected */

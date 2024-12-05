@@ -37,6 +37,9 @@ export const LoginForm = () => {
 
         // Save token to local storage
         localStorage.setItem("token", token);
+
+        // Save username to local storage
+        localStorage.setItem("username", username);
         
         toast.success("Login successful!", {
           position: "top-right",
