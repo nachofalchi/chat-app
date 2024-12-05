@@ -21,4 +21,10 @@ def get_email(username,id):
         return False
     else:
         return EmailOut.from_db(email)
+
+def delete_email(username,id):
+
+    if not db.delete_email(username,id):
+        return False
+    return True
         

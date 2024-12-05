@@ -68,3 +68,16 @@ class Email(Base):
             return email_dict
         finally:
             session.close()
+
+    @classmethod
+    def delete_email(cls, recipient, id):
+        session = Session()
+        try:
+            email = session.query(Email).filter_by(recipient=recipient, id = id).first()
+            if not email:
+                return False
+            session.delete(email)
+            session.commit()
+            return True
+        finally:
+            session.close()

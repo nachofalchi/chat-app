@@ -4,6 +4,7 @@ from auth.utils import validate_token
 from crud.email import send_email as crud_send_email
 from crud.email import get_emails as crud_get_emails
 from crud.email import get_email as crud_get_email
+from crud.email import delete_email as crud_delete_email
 
 
 router = APIRouter()
@@ -76,7 +77,7 @@ async def get_inbox(username = Depends(validate_token)):
             status_code=status.HTTP_200_OK,
             responses={
                 200: {
-                    "description": "Emails retrieved successfully"
+                    "description": "Email retrieved successfully"
                 },
                 400: {
                     "description": "Could not retrieve email"
@@ -97,4 +98,33 @@ async def get_email(id: int,username = Depends(validate_token)):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error retrieving email: {str(e)}"
+        )
+    
+@router.get(
+            "/inbox/delete_email",
+            description="Delete a specific email",
+            status_code=status.HTTP_200_OK,
+            responses={
+                200: {
+                    "description": "Emails retrieved successfully"
+                },
+                400: {
+                    "description": "Could not retrieve email"
+                },
+                401: {
+                    "description": "Could not validate credential"
+                }
+            }
+)
+async def delete_email(id: int,username = Depends(validate_token)):
+    try:
+        success = crud_delete_email(username,id)
+        if success:
+            return {"message": "Email deleted successfully"}
+        else:
+            return {"message": "Email not deleted"}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error deleting email: {str(e)}"
         )
