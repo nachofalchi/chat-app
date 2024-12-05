@@ -100,7 +100,7 @@ async def get_email(id: int,username = Depends(validate_token)):
             detail=f"Error retrieving email: {str(e)}"
         )
     
-@router.get(
+@router.delete(
             "/inbox/delete_email",
             description="Delete a specific email",
             status_code=status.HTTP_200_OK,

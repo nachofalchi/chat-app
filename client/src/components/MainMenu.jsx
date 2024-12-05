@@ -11,6 +11,7 @@ export const MainMenu = () => {
     const [error, setError] = useState(null);
     const [username] = useState(localStorage.getItem('username'));
     const navigate = useNavigate();
+    const [shownEmail, setShownEmail] = useState(null);
 
     // Logout
     const handleLogout = () => {
@@ -23,7 +24,7 @@ export const MainMenu = () => {
         const fetchEmails = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:8000/email/inbox', {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/email/inbox`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -41,12 +42,46 @@ export const MainMenu = () => {
     }, []);
 
     // Handle email click
-    const handleEmailClick = (email) => {
+    const handleEmailClick = async (email) => {
+        const emailData = await getEmail(email.id);
+        setShownEmail(emailData);
         setSelectedEmail(email);
     };
 
+    // Get email
+    const getEmail = async (id) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/email/inbox/get_email?id=${id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching email:', error);
+            return null;
+        }
+    }
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
+
+    // Delete email
+    const handleDelete = async () => {
+        try {
+            console.log('selectedEmail:', selectedEmail);
+            const token = localStorage.getItem('token');
+            await axios.delete(`${process.env.REACT_APP_API_URL}/email/inbox/delete_email?id=${selectedEmail.id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setSelectedEmail(null);
+        } catch (error) {
+            console.error('Error deleting email:', error);
+        }
+    };
 
     return (
         <div className="mail-container">
@@ -81,13 +116,13 @@ export const MainMenu = () => {
             <div className="email-list">
                 <div className='email-control-buttons'>
                     <button className="control-button">
-                        <span className="control-icon">🗑️</span>
+                        <span className="control-icon" onClick={() => handleDelete()}>🗑️</span>
                         Delete
                     </button>
-                    <button className="control-button">
+                    {/* <button className="control-button" onClick={() => handleRead()}>
                         <span className="control-icon">📨</span>
                         Mark as Read
-                    </button>
+                    </button> */}
                     <button className="control-button">
                         <span className="control-icon">📁</span>
                         Move to
@@ -110,11 +145,11 @@ export const MainMenu = () => {
                     <div className="email-detail">
                         <h3>{selectedEmail.subject}</h3>
                         <div className="email-header">
-                            <span>From: {selectedEmail.sender}</span>
-                            <span>{selectedEmail.timestamp}</span>
+                            <span>From: {shownEmail.sender}</span>
+                            <span>{shownEmail.timestamp}</span>
                         </div>
                         <div className="email-body">
-                            {selectedEmail.body}
+                            {shownEmail.body}
                         </div>
                     </div>
                 ) : (

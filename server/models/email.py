@@ -41,7 +41,7 @@ class Email(Base):
     def get_emails(cls, recipient):
         session = Session()
         try:
-            emails = session.query(Email).filter_by(recipient=recipient).all()
+            emails = session.query(Email).filter_by(recipient=recipient, folder='inbox').all()
             return emails
         finally:
             session.close()
@@ -76,7 +76,7 @@ class Email(Base):
             email = session.query(Email).filter_by(recipient=recipient, id = id).first()
             if not email:
                 return False
-            session.delete(email)
+            email.folder = 'trash'
             session.commit()
             return True
         finally:
