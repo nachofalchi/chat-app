@@ -81,3 +81,13 @@ class Email(Base):
             return True
         finally:
             session.close()
+    
+    # Trash
+    @classmethod
+    def get_trash_emails(cls, recipient):
+        session = Session()
+        try:
+            emails = session.query(Email).filter_by(recipient=recipient, folder='trash').all()
+            return emails
+        finally:
+            session.close()

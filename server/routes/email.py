@@ -5,6 +5,7 @@ from crud.email import send_email as crud_send_email
 from crud.email import get_emails as crud_get_emails
 from crud.email import get_email as crud_get_email
 from crud.email import delete_email as crud_delete_email
+from crud.email import get_trash_emails as crud_get_trash_emails
 
 
 router = APIRouter()
@@ -41,6 +42,8 @@ async def send_email(email: EmailSchema, _: bool = Depends(validate_token)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error sending email: {str(e)}"
         )
+
+# Inbox
 
 @router.get(
             "/inbox",
@@ -127,4 +130,34 @@ async def delete_email(id: int,username = Depends(validate_token)):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error deleting email: {str(e)}"
+        )
+    
+# Trash
+@router.get(
+            "/trash",
+            description="Get all emails in trash",
+            status_code=status.HTTP_200_OK,
+            responses={
+                200: {
+                    "description": "Emails retrieved successfully"
+                },
+                400: {
+                    "description": "Could not retrieve emails"
+                },
+                401: {
+                    "description": "Could not validate credentials"
+                }
+            }
+)
+async def get_trash(username = Depends(validate_token)):
+    try:
+        emails = crud_get_trash_emails(username)
+        if emails is None:
+            return {"message": "No emails found"}
+        else:
+            return emails
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error retrieving emails: {str(e)}"
         )
