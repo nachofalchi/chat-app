@@ -3,6 +3,8 @@ from schemas.email import EmailSchema
 from auth.utils import validate_token
 from crud.email import send_email as crud_send_email
 from crud.email import get_emails as crud_get_emails
+from crud.email import get_email as crud_get_email
+
 
 router = APIRouter()
 
@@ -66,4 +68,33 @@ async def get_inbox(username = Depends(validate_token)):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error retrieving emails: {str(e)}"
+        )
+    
+@router.get(
+            "/inbox/get_email",
+            description="Get a specific email",
+            status_code=status.HTTP_200_OK,
+            responses={
+                200: {
+                    "description": "Emails retrieved successfully"
+                },
+                400: {
+                    "description": "Could not retrieve email"
+                },
+                401: {
+                    "description": "Could not validate credential"
+                }
+            }
+)
+async def get_email(id: int,username = Depends(validate_token)):
+    try:
+        email = crud_get_email(username,id)
+        if email is None:
+            return {"message": "Email not found"}
+        else:
+            return email
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error retrieving email: {str(e)}"
         )

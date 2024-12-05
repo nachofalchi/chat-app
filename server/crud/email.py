@@ -1,5 +1,5 @@
 from models.email import Email as db
-from schemas.email import EmailSchema, EmailList
+from schemas.email import EmailSchema, EmailList, EmailOut
 
 def send_email(email : EmailSchema):
     if not db.add_email(email):
@@ -13,4 +13,12 @@ def get_emails(username):
         return []
     else:
         return EmailList.from_db(email_list)
+    
+def get_email(username,id):
+
+    email = db.get_email(username,id)
+    if not email:
+        return False
+    else:
+        return EmailOut.from_db(email)
         

@@ -45,3 +45,26 @@ class Email(Base):
             return emails
         finally:
             session.close()
+
+    @classmethod
+    def get_email(cls, recipient, id):
+        session = Session()
+        try:
+            email = session.query(Email).filter_by(recipient=recipient, id = id).first()
+            email.is_read = True
+            session.commit()
+            if not email:
+                return False
+            email_dict = {
+                "id": email.id,
+                "sender": email.sender,
+                "recipient": email.recipient,
+                "subject": email.subject,
+                "body": email.body,
+                "timestamp": email.timestamp,
+                "is_read": email.is_read,
+                "folder": email.folder
+            }
+            return email_dict
+        finally:
+            session.close()
