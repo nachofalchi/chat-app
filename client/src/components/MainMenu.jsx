@@ -6,6 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 
 export const MainMenu = () => {
     const [selectedEmail, setSelectedEmail] = useState(null);
+    const [activeFolder, setActiveFolder] = useState('inbox');
     const [emails, setEmails] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -19,25 +20,27 @@ export const MainMenu = () => {
         navigate('/');                     
     };
 
+    // Inbox
     // Fetch emails
+    const fetchEmails = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/email/inbox`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setEmails(response.data.emails);
+            setLoading(false);
+            setActiveFolder('inbox');
+        } catch (error) {
+            console.error('Error fetching emails:', error);
+            setError('Could not load emails');
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchEmails = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/email/inbox`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                setEmails(response.data.emails);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching emails:', error);
-                setError('Could not load emails');
-                setLoading(false);
-            }
-        };
-        
         fetchEmails();
     }, []);
 
@@ -64,6 +67,26 @@ export const MainMenu = () => {
         }
     }
 
+    // Trash
+    const fetchTrash = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/email/trash`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setEmails(response.data.emails);
+            setActiveFolder('trash');
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching trash:', error);
+            setError('Could not load trash');
+            setLoading(false);
+        }
+    };
+
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
@@ -78,6 +101,7 @@ export const MainMenu = () => {
                 }
             });
             setSelectedEmail(null);
+            fetchEmails();
         } catch (error) {
             console.error('Error deleting email:', error);
         }
@@ -100,10 +124,10 @@ export const MainMenu = () => {
             <div className="sidebar">
                 <button className="compose-btn">Compose</button>
                 <ul className="folder-list">
-                    <li className="active">Inbox</li>
+                    <li onClick={()=>fetchEmails()} className={activeFolder === 'inbox' ? 'active' : ''}>Inbox</li>
                     <li>Sent</li>
                     <li>Drafts</li>
-                    <li>Trash</li>
+                    <li onClick={()=>fetchTrash()} className={activeFolder === 'trash' ? 'active' : ''} >Trash</li>
                 </ul>
                 <button 
                     className="logout-btn"
@@ -115,8 +139,7 @@ export const MainMenu = () => {
             {/* Email List */}
             <div className="email-list">
                 <div className='email-control-buttons'>
-                    <button className="control-button">
-                        <span className="control-icon" onClick={() => handleDelete()}>🗑️</span>
+                    <button className="control-button" onClick={() => handleDelete()}>
                         Delete
                     </button>
                     {/* <button className="control-button" onClick={() => handleRead()}>
@@ -129,13 +152,17 @@ export const MainMenu = () => {
                     </button>
                 </div>
                 <div className="email-list-container">
-                    {emails.map(email => (
-                        <div key={email.id} className="email-item" onClick={() => handleEmailClick(email)}>
-                            <div className="email-sender">{email.sender}</div>
-                            <div className="email-subject">{email.subject}</div>
-                            <div className="email-date">{email.timestamp}</div>
-                        </div>
-                    ))}
+                    {emails && emails.length > 0 ? (
+                        emails.map(email => (
+                            <div key={email.id} className="email-item" onClick={() => handleEmailClick(email)}>
+                                <div className="email-sender">{email.sender}</div>
+                                <div className="email-subject">{email.subject}</div>
+                                <div className="email-date">{email.timestamp}</div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="no-emails">No emails found</div>
+                    )}
                 </div>
             </div>
 
