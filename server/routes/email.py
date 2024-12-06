@@ -30,9 +30,9 @@ router = APIRouter()
             }
 
 )
-async def send_email(email: EmailSchema, _: bool = Depends(validate_token)):
+async def send_email(email: EmailSchema, username = Depends(validate_token)):
     try:
-        success = crud_send_email(email)
+        success = crud_send_email(email, username)
         if not success:
             raise HTTPException(status_code=400, detail="Could not send email")
         else:

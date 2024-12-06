@@ -19,11 +19,11 @@ class Email(Base):
 
 
     @classmethod
-    def add_email(cls, email: EmailSchema):
+    def add_email(cls, email: EmailSchema, username):
         session = Session()
         try:
             new_email = Email(
-                sender=email.sender,
+                sender=username,
                 recipient=email.recipient,
                 subject=email.subject,
                 body=email.body

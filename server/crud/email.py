@@ -3,8 +3,8 @@ from schemas.email import EmailSchema, EmailList, EmailOut
 
 # CRUD ops for inbox
 
-def send_email(email : EmailSchema):
-    if not db.add_email(email):
+def send_email(email : EmailSchema, username):
+    if not db.add_email(email, username):
         return False
     return True
 
