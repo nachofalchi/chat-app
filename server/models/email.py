@@ -50,7 +50,10 @@ class Email(Base):
     def get_email(cls, recipient, id):
         session = Session()
         try:
-            email = session.query(Email).filter_by(recipient=recipient, id = id).first()
+            email = session.query(Email).filter_by(id = id).first()
+
+            if not(email.recipient == recipient or email.sender == recipient):
+                return False
             email.is_read = True
             session.commit()
             if not email:
@@ -89,5 +92,45 @@ class Email(Base):
         try:
             emails = session.query(Email).filter_by(recipient=recipient, folder='trash').all()
             return emails
+        finally:
+            session.close()
+    
+    # Sent
+    @classmethod
+    def get_sent_emails(cls, sender):
+        session = Session()
+        try:
+            emails = session.query(Email).filter_by(sender=sender).all()
+            return emails
+        finally:
+            session.close()
+        
+    #Drafts
+    @classmethod
+    def get_drafts_emails(cls, sender):
+        session = Session()
+        try:
+            emails = session.query(Email).filter_by(sender=sender, folder='drafts').all()
+            return emails
+        finally:
+            session.close()
+
+    @classmethod
+    def save_draft(cls, email: EmailSchema, username):
+        session = Session()
+        try:
+            new_email = Email(
+                sender=username,
+                recipient=email.recipient,
+                subject=email.subject,
+                body=email.body,
+                folder='drafts'
+            )
+            session.add(new_email)
+            session.commit()
+            return True
+        except IntegrityError:
+            session.rollback()
+            return False
         finally:
             session.close()

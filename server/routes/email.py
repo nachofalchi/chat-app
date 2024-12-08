@@ -6,6 +6,9 @@ from crud.email import get_emails as crud_get_emails
 from crud.email import get_email as crud_get_email
 from crud.email import delete_email as crud_delete_email
 from crud.email import get_trash_emails as crud_get_trash_emails
+from crud.email import get_sent_emails as crud_get_sent_emails
+from crud.email import get_draft_emails as crud_get_draft_emails
+from crud.email import save_draft as crud_save_draft
 
 
 router = APIRouter()
@@ -161,3 +164,94 @@ async def get_trash(username = Depends(validate_token)):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error retrieving emails: {str(e)}"
         )
+    
+# Sent
+@router.get(
+            "/sent",
+            description="Get all sent emails",
+            status_code=status.HTTP_200_OK,
+            responses={
+                200: {
+                    "description": "Emails retrieved successfully"
+                },
+                400: {
+                    "description": "Could not retrieve emails"
+                },
+                401: {
+                    "description": "Could not validate credentials"
+                }
+            }
+)
+async def get_sent(username = Depends(validate_token)):
+    try:
+        emails = crud_get_sent_emails(username)
+        if emails is None:
+            return {"message": "No emails found"}
+        else:
+            return emails
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error retrieving emails: {str(e)}"
+        )
+
+# Drafts
+@router.get(
+            "/drafts",
+            description="Get all draft emails",
+            status_code=status.HTTP_200_OK,
+            responses={
+                200: {
+                    "description": "Emails retrieved successfully"
+                },
+                400: {
+                    "description": "Could not retrieve emails"
+                },
+                401: {
+                    "description": "Could not validate credentials"
+                }
+            }
+)
+async def get_drafts(username = Depends(validate_token)):
+    try:
+        emails = crud_get_draft_emails(username)
+        if emails is None:
+            return {"message": "No emails found"}
+        else:
+            return emails
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error retrieving emails: {str(e)}"
+        )
+
+# Save Draft
+@router.post(
+            "/save-draft",
+            description="Save an email as a draft",
+            status_code=status.HTTP_201_CREATED,
+            responses={
+                201: {
+                    "description": "Email saved as draft"
+                },
+                400: {
+                    "description": "Could not save email"
+                },
+                401: {
+                    "description": "Could not validate credentials"
+                }
+            }
+)
+async def save_drafts(email: EmailSchema,username = Depends(validate_token)):
+    try:
+        success = crud_save_draft(email, username)
+        if not success:
+            raise HTTPException(status_code=400, detail="Could not save email")
+        else:
+            return {"message": "Email saved as draft"}
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error retrieving emails: {str(e)}"
+        )
+
