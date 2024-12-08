@@ -7,7 +7,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Permitir solicitudes desde localhost:3000
+    allow_origins=["https://mailappchona.vercel.app"],  # Permitir solicitudes desde localhost:3000
     allow_credentials=True,
     allow_methods=["*"],  # Permitir todos los métodos (GET, POST, PUT, etc.)
     allow_headers=["*"],  # Permitir todos los encabezados
