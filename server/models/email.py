@@ -107,7 +107,7 @@ class Email(Base):
         
     #Drafts
     @classmethod
-    def get_drafts_emails(cls, sender):
+    def get_draft_emails(cls, sender):
         session = Session()
         try:
             emails = session.query(Email).filter_by(sender=sender, folder='drafts').all()
