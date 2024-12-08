@@ -48,6 +48,17 @@
     padding: 15px;
     display: flex;
     justify-content: flex-start;
+    display: flex;
+    gap: 10px;
+}
+
+.draft-button {
+    background: #f1f3f4;
+    color: #5f6368;
+}
+
+.draft-button:hover {
+    background: #e8eaed;
 }
 
 .error-message {

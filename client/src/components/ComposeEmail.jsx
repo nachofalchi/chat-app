@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import './ComposeEmail.css';
 
-export const ComposeEmail = ({ onClose, onSend }) => {
+export const ComposeEmail = ({ onClose, onSend, onSaveDraft }) => {
     const [emailData, setEmailData] = useState({
         sender: localStorage.getItem('username'),
         recipient: '',
@@ -22,6 +22,19 @@ export const ComposeEmail = ({ onClose, onSend }) => {
             onClose();
         } catch (err) {
             setError('Failed to send email');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const handleSaveDraft = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            await onSaveDraft(emailData);
+            onClose();
+        } catch (err) {
+            setError('Failed to save draft');
             console.error(err);
         } finally {
             setLoading(false);
@@ -90,6 +103,14 @@ export const ComposeEmail = ({ onClose, onSend }) => {
                             disabled={loading}
                         >
                             {loading ? 'Sending...' : 'Send'}
+                        </button>
+                        <button 
+                            type="button"
+                            onClick={handleSaveDraft}
+                            disabled={loading}
+                            className="draft-button"
+                        >
+                            Save Draft
                         </button>
                     </div>
                 </form>

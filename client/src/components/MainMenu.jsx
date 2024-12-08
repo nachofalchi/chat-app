@@ -102,7 +102,7 @@ export const MainMenu = () => {
     const fetchSent = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/email/trash`, {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/email/sent`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -120,7 +120,7 @@ export const MainMenu = () => {
     const fetchDrafts = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/email/trash`, {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/email/drafts`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -132,6 +132,24 @@ export const MainMenu = () => {
             console.error('Error fetching drafts:', error);
             setError('Could not load drafts');
             setLoading(false);
+        }
+    };
+
+    const handleSaveDraft = async (emailData) => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.post(
+                `${process.env.REACT_APP_API_URL}/email/save-draft`,
+                emailData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+        } catch (error) {
+            console.error('Error sending email:', error);
+            throw error; // Propagate error to ComposeEmail component
         }
     };
 
@@ -254,7 +272,7 @@ export const MainMenu = () => {
             </div>
             {/* Compose */}
             {showCompose && (
-                <ComposeEmail onClose={handleCloseCompose} onSend={handleSendEmail} />
+                <ComposeEmail onClose={handleCloseCompose} onSend={handleSendEmail} onSaveDraft={handleSaveDraft}/>
             )}
         </div>
     );
