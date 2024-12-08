@@ -76,7 +76,9 @@ class Email(Base):
     def delete_email(cls, recipient, id):
         session = Session()
         try:
-            email = session.query(Email).filter_by(recipient=recipient, id = id).first()
+            email = session.query(Email).filter_by(id = id).first()
+            if not(email.recipient == recipient or email.sender == recipient):
+                return False
             if not email:
                 return False
             email.folder = 'trash'
