@@ -3,18 +3,50 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './MainMenu.css';
 import SearchIcon from '@mui/icons-material/Search';
+import { ComposeEmail } from './ComposeEmail';
 
 export const MainMenu = () => {
+    // Mail states
     const [selectedEmail, setSelectedEmail] = useState(null);
     const [activeFolder, setActiveFolder] = useState('inbox');
     const [emails, setEmails] = useState([]);
+    const [shownEmail, setShownEmail] = useState(null);
+    // Web states
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [username] = useState(localStorage.getItem('username'));
-    const navigate = useNavigate();
-    const [shownEmail, setShownEmail] = useState(null);
+    const [showCompose, setShowCompose] = useState(false);
 
-    // Logout
+    const navigate = useNavigate();
+
+    const handleCloseCompose = () => {
+        setShowCompose(false);
+    };
+
+    const handleCompose = () => {
+        setShowCompose(true);
+    };
+
+    const handleSendEmail = async (emailData) => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.post(
+                `${process.env.REACT_APP_API_URL}/email/send_email`,
+                emailData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                }
+            );
+            // Refresh inbox after sending
+            await fetchEmails();
+        } catch (error) {
+            console.error('Error sending email:', error);
+            throw error; // Propagate error to ComposeEmail component
+        }
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('token'); 
         navigate('/');                     
@@ -122,7 +154,7 @@ export const MainMenu = () => {
             </div>
             {/* Sidebar */}
             <div className="sidebar">
-                <button className="compose-btn">Compose</button>
+                <button className="compose-btn" onClick={()=>handleCompose()}>Compose</button>
                 <ul className="folder-list">
                     <li onClick={()=>fetchEmails()} className={activeFolder === 'inbox' ? 'active' : ''}>Inbox</li>
                     <li>Sent</li>
@@ -185,6 +217,10 @@ export const MainMenu = () => {
                     </div>
                 )}
             </div>
+            {/* Compose */}
+            {showCompose && (
+                <ComposeEmail onClose={handleCloseCompose} onSend={handleSendEmail} />
+            )}
         </div>
     );
 }
