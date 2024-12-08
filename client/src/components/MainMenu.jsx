@@ -99,7 +99,42 @@ export const MainMenu = () => {
         }
     }
 
-    // Trash
+    const fetchSent = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/email/trash`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setEmails(response.data.emails);
+            setActiveFolder('sent');
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching sent emails:', error);
+            setError('Could not load sent emails');
+            setLoading(false);
+        }
+    };
+
+    const fetchDrafts = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/email/trash`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            setEmails(response.data.emails);
+            setActiveFolder('drafts');
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching drafts:', error);
+            setError('Could not load drafts');
+            setLoading(false);
+        }
+    };
+
     const fetchTrash = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -157,8 +192,8 @@ export const MainMenu = () => {
                 <button className="compose-btn" onClick={()=>handleCompose()}>Compose</button>
                 <ul className="folder-list">
                     <li onClick={()=>fetchEmails()} className={activeFolder === 'inbox' ? 'active' : ''}>Inbox</li>
-                    <li>Sent</li>
-                    <li>Drafts</li>
+                    <li onClick={()=>fetchSent()} className={activeFolder === 'sent' ? 'active' : ''}>Sent</li>
+                    <li onClick={()=>fetchDrafts()} className={activeFolder === 'drafts' ? 'active' : ''}>Drafts</li>
                     <li onClick={()=>fetchTrash()} className={activeFolder === 'trash' ? 'active' : ''} >Trash</li>
                 </ul>
                 <button 
